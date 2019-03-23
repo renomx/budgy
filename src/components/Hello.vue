@@ -9,8 +9,8 @@
               <input v-model="newThing" class="input" v-bind:class="thingClass" type="text" placeholder="What are you buying?" value="">
               <span class="icon is-small is-left">
                 <i class="fas fa-shopping-basket"></i>
-              </span>            
-            </div>            
+              </span>
+            </div>
           </div>
       </div>
     </div>
@@ -24,8 +24,8 @@
             <input v-model="newCost" class="input" v-bind:class="costClass" type="text" placeholder="How much?" value="">
             <span class="icon is-small is-left">
               <i class="fas fa-dollar-sign"></i>
-            </span>            
-          </div>         
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -44,12 +44,12 @@
     <div class="columns" v-for="exp in expenses">
       <div class="column is-three-quarters">
         <div class="box">
-          <article class="media">        
+          <article class="media">
             <div class="media-content">
               <div class="content">
-                {{ exp.Id }}
+                {{ exp.id }}
                 <strong>${{ exp.cost }}</strong> on <strong>{{ exp.thing }}</strong><br />
-                <span class="is-size-7">{{ exp.date }}</span>          
+                <span class="is-size-7">{{ exp.date }}</span>
               </div>
 
               <nav class="level is-mobile">
@@ -59,37 +59,40 @@
                       <i class="fas fa-lg fa-reply" aria-hidden="true"></i>
                     </span>
                   </a>
-                  <a class="level-item" aria-label="delete" >
+                  <a class="level-item" aria-label="delete" v-on:click="deleteExpense(exp.id)">
                     <span class="icon is-large">
                       <i class="fas fa-lg fa-trash-alt" aria-hidden="true"></i>
                     </span>
-                  </a>              
+                  </a>
                 </div>
-              </nav>    
+              </nav>
             </div>
-          </article>     
+          </article>
         </div>
       </div>
     </div>
-  
+
 
   </div>
 </template>
 
 <script>
+import Dexie from 'dexie'
+
 export default {
   name: 'hello',
   data () {
     return {
       expenses: [
-        { Id: 1, thing: 'Gas', cost: 25.00, date: '3/22/2019 5:13 PM' },
-        { Id: 2, thing: 'Lunch', cost: 9.25, date: '3/22/2019 11:50 AM' },
-        { Id: 3, thing: 'Smash Bros Ultimate :)', cost: 60.00, date: '3/20/2019 7:30 PM' }
+        { Id: 1, thing: 'Gas', cost: 25.00 },
+        { Id: 2, thing: 'Lunch', cost: 9.25 },
+        { Id: 3, thing: 'Smash Bros Ultimate :)', cost: 60.00 }
       ],
       newThing: '',
       newThingValid: true,
       newCost: 0.0,
-      newCostValid: true
+      newCostValid: true,
+      db: null
     }
   },
   computed: {
@@ -109,9 +112,16 @@ export default {
     }
   },
   mounted () {
+    this.db = new Dexie('expensesDb')
+    this.db.version(1).stores({
+      expenses: `++id, thing, cost, date`
+    })
     for (var expense of this.expenses) {
-      console.log(expense)
-      localStorage.setItem(`budgy.${expense.Id}`, JSON.stringify(expense))
+      this.db.expenses.add({
+        thing: expense.thing,
+        cost: expense.cost,
+        date: new Date().toLocaleDateString()
+      })
     }
   },
   methods: {
@@ -120,8 +130,7 @@ export default {
       this.newCostValid = (this.newCost > 0)
 
       if (this.newThing !== '' && this.newCost > 0) {
-        this.expenses.push({
-          Id: this.expenses.length + 1,
+        this.db.expenses.add({
           thing: this.newThing,
           cost: this.newCost,
           date: new Date().toLocaleDateString()
@@ -138,8 +147,8 @@ export default {
     addExpense: function () {
 
     },
-    deleteExpense: function () {
-
+    deleteExpense: function (id) {
+      this.db.expenses.delete(id)
     }
   }
 }

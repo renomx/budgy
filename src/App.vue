@@ -1,13 +1,13 @@
 <template>
-  <div id="app" class="container level">   
+  <div id="app" class="container level">
     <main class="is-vcentered hero">
       <div class="hero-body">
         <div class="container">
           <h1 class="title">
             Expenses?
-          </h1>           
-          
-          <router-view></router-view>          
+          </h1>
+
+          <router-view></router-view>
         </div>
       </div>
     </main>
