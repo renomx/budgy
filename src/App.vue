@@ -4,8 +4,8 @@
       <div class="hero-body">
         <div class="container">
           <br />
-          <router-link to="/">Home</router-link> |
-          <router-link to="/reports">Reports</router-link>
+          <router-link to="/" class="waves-effect waves-light btn">Home</router-link> |
+          <router-link to="/reports" class="waves-effect waves-light btn">Reports</router-link>
           <h1 class="title">
             Expenses?
           </h1>

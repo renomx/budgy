@@ -5,13 +5,15 @@
                 {{ exp.thing }} - {{ exp.cost }}
             </li>
         </ul>
-        <pie-chart :dataton="datacollection"></pie-chart>
+        <br /><br />
+        <pie-chart :chart-data="datacollection"></pie-chart>
     </div>
 </template>
 
 <script>
 import Dexie from 'dexie'
 import PieChart from './charts/PieChart.js'
+
 
 export default {
   components: {
@@ -25,7 +27,7 @@ export default {
       report: 0,
       num: 0,
       db: null,
-      datacollection: {},
+      datacollection: null
     }
   },
   mounted () {
@@ -64,9 +66,21 @@ export default {
 
       this.datacollection = {
         labels: this.list.map(x => x.thing),
-        data: this.list.map(x => x.cost)
+        datasets: [
+            {
+              label: "Expenses",
+              data: this.list.map(x => x.cost),
+              backgroundColor: [
+                '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
+              ],
+              borderColor: [
+                '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000'
+              ]
+            }
+        ]
       }
-    })  
+
+    })
   }
 }
 </script>
