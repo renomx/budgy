@@ -27,7 +27,7 @@
     <div class="row">
       <div class="col s12">
         <div class="control">
-          <button v-on:click="createExpense" class="waves-effect waves-light btn">Save</button>
+          <button v-on:click="createExpense" class="waves-effect waves-light btn scale-transition scale-in">Save</button>
         </div>
       </div>
     </div>

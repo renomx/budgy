@@ -3,10 +3,12 @@
     <main class="is-vcentered hero">
       <div class="hero-body">
         <div class="container">
+          <br />
+          <router-link to="/">Home</router-link> |
+          <router-link to="/reports">Reports</router-link>
           <h1 class="title">
             Expenses?
           </h1>
-
           <router-view></router-view>
         </div>
       </div>

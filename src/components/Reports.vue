@@ -1,23 +1,31 @@
 <template>
     <div class="section">
         <ul class="collection">
-            <li class="collection-item" v-for="exp in expenses">
-                {{ exp.id }} - {{ exp.thing }} - {{ exp.cost }}
+            <li class="collection-item" v-for="exp in list">
+                {{ exp.thing }} - {{ exp.cost }}
             </li>
         </ul>
+        <pie-chart :dataton="datacollection"></pie-chart>
     </div>
 </template>
 
 <script>
 import Dexie from 'dexie'
+import PieChart from './charts/PieChart.js'
 
 export default {
+  components: {
+      PieChart
+  },
   name: 'reports',
   data () {
     return {
-      expenses: [],
+      list: [],
+      lineChart: [],
+      report: 0,
       num: 0,
-      db: null
+      db: null,
+      datacollection: {},
     }
   },
   mounted () {
@@ -27,27 +35,38 @@ export default {
     })
     this.db.open().catch(function (e) { alert('Open failed: ' + e) })
 
-    var self = this
-    this.db.expenses.toArray(function (exp) {
-      self.expenses = exp
-    })
+    let report = {};
 
-    var result = []
-    const reducer = (res, value) => {
-      if (!res[value.type]) {
-        res[value.type] = { thing: value.type, cost: 0 }
-        result.push(res[value.type])
+    this.db.expenses.toArray().then(exp => {
+      let data = exp.reduce((prev, cur) => {
+        if(prev === undefined) {
+          prev = []
+        }
+
+        let index = prev.findIndex(item => {
+          return item.thing == cur.thing
+        })
+
+        if(index < 0) {
+          prev.push({
+            thing: cur.thing,
+            cost: parseFloat(cur.cost)
+          })
+        } else {
+          prev[index].cost += parseFloat(cur.cost)
+        }
+
+        return prev
+
+      }, [])
+
+      this.list = data
+
+      this.datacollection = {
+        labels: this.list.map(x => x.thing),
+        data: this.list.map(x => x.cost)
       }
-      res[value.type].qty += value.qty
-      return res
-    }
-
-    this.expenses.reduce(reducer)
-
-    console.log(result)
-  },
-  methods: {
-
+    })  
   }
 }
 </script>
